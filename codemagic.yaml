@@ -17,9 +17,6 @@ workflows:
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
             --create
-      - name: Increment build number
-        script: |
-          agvtool new-version -all $(($(app-store-connect get-latest-app-store-build-number 6798753030) + 1))
       - name: Build IPA
         script: |
           xcode-project build-ipa \
@@ -27,9 +24,3 @@ workflows:
             --scheme "WashThePlane"
     artifacts:
       - build/ios/ipa/*.ipa
-      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
-    publishing:
-      app_store_connect:
-        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
-        key_id: $APP_STORE_CONNECT_KEY_ID
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
