@@ -1,17 +1,22 @@
 workflows:
-  build-and-publish:
-    name: WashThePlane
+  release:
+    name: Release
     max_build_duration: 60
     instance_type: mac_mini_m2
     environment:
       xcode: latest
-      cocoapods: default
-      groups:
-        - head
       vars:
-        BUNDLE_ID: com.washtheplane.released
+        XCODE_SCHEME: "WashThePlane"
+        BUNDLE_ID: "com.washtheplane.released"
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: "com.washtheplane.released"
     scripts:
       - name: Build IPA
-        script: xcode-project build-ipa --project "WashThePlane.xcodeproj" --scheme "WashThePlane"
+        script: xcode-project build-ipa --scheme "$XCODE_SCHEME" --project "WashThePlane.xcodeproj"
     artifacts:
       - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
