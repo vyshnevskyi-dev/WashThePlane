@@ -6,6 +6,8 @@ workflows:
     environment:
       xcode: latest
       cocoapods: default
+      groups:
+        - head
       vars:
         BUNDLE_ID: com.washtheplane.released
         APP_STORE_CONNECT_KEY_ID: CGAC4L3D2T
