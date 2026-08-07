@@ -22,5 +22,9 @@ workflows:
           xcode-project build-ipa \
             --project "WashThePlane.xcodeproj" \
             --scheme "WashThePlane"
+      - name: Publish to TestFlight
+        script: |
+          app-store-connect publish \
+            --path build/ios/ipa/*.ipa
     artifacts:
       - build/ios/ipa/*.ipa
