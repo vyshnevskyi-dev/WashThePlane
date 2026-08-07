@@ -5,38 +5,14 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       xcode: latest
-      groups:
-        - head
       vars:
         XCODE_SCHEME: "WashThePlane"
         BUNDLE_ID: "com.washtheplane.released"
-        APP_STORE_CONNECT_KEY_IDENTIFIER: CGAC4L3D2T
-        APP_STORE_CONNECT_ISSUER_ID: a2595058-57ae-4d5f-8bc7-3e1276717d1d
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: "com.washtheplane.released"
     scripts:
-      - name: Create API key JSON
-        script: |
-          python3 -c "
-          import json, os
-          data = {
-              'key_id': os.environ['APP_STORE_CONNECT_KEY_IDENTIFIER'],
-              'issuer_id': os.environ['APP_STORE_CONNECT_ISSUER_ID'],
-              'key': os.environ['APP_STORE_CONNECT_PRIVATE_KEY'],
-              'in_house': False
-          }
-          with open('/tmp/api_key.json', 'w') as f:
-              json.dump(data, f, indent=2)
-          "
-      - name: Fetch signing files
-        script: |
-          keychain initialize
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE \
-            --create \
-            --api_key_path /tmp/api_key.json
       - name: Build IPA
-        script: |
-          xcode-project build-ipa \
-            --project "WashThePlane.xcodeproj" \
-            --scheme "$XCODE_SCHEME"
+        script: xcode-project build-ipa --scheme "$XCODE_SCHEME" --project "WashThePlane.xcodeproj"
     artifacts:
       - build/ios/ipa/*.ipa
