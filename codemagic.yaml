@@ -8,11 +8,8 @@ workflows:
       cocoapods: default
       vars:
         BUNDLE_ID: com.washtheplane.released
-        APP_STORE_CONNECT_KEY_ID: Encrypted(...) # заменить
-        APP_STORE_CONNECT_ISSUER_ID: Encrypted(...) # заменить
-      groups:
-        - appstore_credentials # App Store Connect API key (.p8)
-        - code_signing         # signing certificate + provisioning profile
+        APP_STORE_CONNECT_KEY_ID: CGAC4L3D2T
+        APP_STORE_CONNECT_ISSUER_ID: a2595058-57ae-4d5f-8bc7-3e1276717d1d
     scripts:
       - name: Set up code signing
         script: |
@@ -22,19 +19,18 @@ workflows:
             --create
       - name: Increment build number
         script: |
-          agvtool new-version -all $(($(app-store-connect get-latest-app-store-build-number "$APP_STORE_CONNECT_APPLE_ID") + 1))
+          agvtool new-version -all $(($(app-store-connect get-latest-app-store-build-number 6798753030) + 1))
       - name: Build IPA
         script: |
           xcode-project build-ipa \
             --project "WashThePlane.xcodeproj" \
-            --scheme "WashThePlane" \
-            --archive-flags="-destination 'generic/platform=iOS'"
+            --scheme "WashThePlane"
     artifacts:
       - build/ios/ipa/*.ipa
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
     publishing:
       app_store_connect:
         apple_id: 6798753030
-        submit_to_app_store: false  # manual review
+        submit_to_app_store: false
         beta_groups:
           - External Testers
