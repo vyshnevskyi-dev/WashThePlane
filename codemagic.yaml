@@ -15,8 +15,7 @@ workflows:
         script: |
           keychain initialize
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE \
-            --create
+            --type IOS_APP_STORE
       - name: Build IPA
         script: |
           xcode-project build-ipa \
