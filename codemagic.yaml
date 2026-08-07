@@ -1,6 +1,6 @@
 workflows:
   build-and-publish:
-    name: WashThePlane — App Store
+    name: WashThePlane
     max_build_duration: 60
     instance_type: mac_mini_m2
     environment:
@@ -10,13 +10,8 @@ workflows:
         - head
       vars:
         BUNDLE_ID: com.washtheplane.released
-        APP_STORE_CONNECT_KEY_ID: CGAC4L3D2T
-        APP_STORE_CONNECT_ISSUER_ID: a2595058-57ae-4d5f-8bc7-3e1276717d1d
     scripts:
       - name: Build IPA
-        script: |
-          xcode-project build-ipa \
-            --project "WashThePlane.xcodeproj" \
-            --scheme "WashThePlane"
+        script: xcode-project build-ipa --project "WashThePlane.xcodeproj" --scheme "WashThePlane"
     artifacts:
       - build/ios/ipa/*.ipa
