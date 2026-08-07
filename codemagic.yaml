@@ -11,19 +11,10 @@ workflows:
         APP_STORE_CONNECT_KEY_ID: CGAC4L3D2T
         APP_STORE_CONNECT_ISSUER_ID: a2595058-57ae-4d5f-8bc7-3e1276717d1d
     scripts:
-      - name: Set up code signing
-        script: |
-          keychain initialize
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE
       - name: Build IPA
         script: |
           xcode-project build-ipa \
             --project "WashThePlane.xcodeproj" \
             --scheme "WashThePlane"
-      - name: Publish to TestFlight
-        script: |
-          app-store-connect publish \
-            --path build/ios/ipa/*.ipa
     artifacts:
       - build/ios/ipa/*.ipa
