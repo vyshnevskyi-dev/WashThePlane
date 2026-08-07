@@ -1,6 +1,6 @@
 workflows:
   build-and-publish:
-    name: WashThePlane — App Store
+    name: WashThePlane — Build Test
     max_build_duration: 60
     instance_type: mac_mini_m2
     environment:
@@ -8,19 +8,18 @@ workflows:
       cocoapods: default
       vars:
         BUNDLE_ID: com.washtheplane.released
-        APP_STORE_CONNECT_KEY_ID: CGAC4L3D2T
-        APP_STORE_CONNECT_ISSUER_ID: a2595058-57ae-4d5f-8bc7-3e1276717d1d
     scripts:
-      - name: Set up code signing
+      - name: Resolve packages
         script: |
-          keychain initialize
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE \
-            --create
-      - name: Build IPA
+          xcodebuild -resolvePackageDependencies \
+            -project "WashThePlane.xcodeproj" \
+            -scheme "WashThePlane"
+      - name: Build (no signing)
         script: |
-          xcode-project build-ipa \
-            --project "WashThePlane.xcodeproj" \
-            --scheme "WashThePlane"
+          xcodebuild build \
+            -project "WashThePlane.xcodeproj" \
+            -scheme "WashThePlane" \
+            -destination "generic/platform=iOS" \
+            CODE_SIGNING_ALLOWED=NO
     artifacts:
       - build/ios/ipa/*.ipa
