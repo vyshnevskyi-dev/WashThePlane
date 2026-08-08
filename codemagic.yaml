@@ -25,7 +25,6 @@ workflows:
         script: |
           xcode-project build-ipa \
             --project "WashThePlane.xcodeproj" \
-            --scheme "$XCODE_SCHEME" \
-            --archive-flags="DEVELOPMENT_TEAM=$TEAM_ID"
+            --scheme "$XCODE_SCHEME"
     artifacts:
       - build/ios/ipa/*.ipa
