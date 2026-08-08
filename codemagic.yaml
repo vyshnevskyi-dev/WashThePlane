@@ -22,11 +22,28 @@ workflows:
             --app_identifier "$BUNDLE_ID" \
             --team_id "$TEAM_ID" \
             --git_url "$MATCH_GIT_URL"
-      - name: Build IPA
+      - name: Archive
         script: |
-          xcode-project build-ipa \
-            --project "WashThePlane.xcodeproj" \
-            --scheme "$XCODE_SCHEME" \
-            --archive-flags="CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=$TEAM_ID PROVISIONING_PROFILE_SPECIFIER=match PROVISIONING_PROFILE=$HOME/Library/MobileDevice/Provisioning\\ Profiles/*.mobileprovision CODE_SIGN_IDENTITY=Apple\\ Distribution"
+          xcodebuild archive \
+            -project "WashThePlane.xcodeproj" \
+            -scheme "$XCODE_SCHEME" \
+            -archivePath "build/WashThePlane.xcarchive" \
+            -destination "generic/platform=iOS" \
+            CODE_SIGN_STYLE=Manual \
+            DEVELOPMENT_TEAM="$TEAM_ID" \
+            CODE_SIGN_IDENTITY="Apple Distribution"
+      - name: Export IPA
+        script: |
+          xcodebuild -exportArchive \
+            -archivePath "build/WashThePlane.xcarchive" \
+            -exportPath "build/export" \
+            -exportOptionsPlist /dev/stdin <<< '
+            <?xml version="1.0" encoding="UTF-8"?>
+            <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+            <plist version="1.0"><dict>
+            <key>method</key><string>app-store</string>
+            <key>teamID</key><string>'"$TEAM_ID"'</string>
+            <key>signingStyle</key><string>manual</string>
+            </dict></plist>'
     artifacts:
-      - build/ios/ipa/*.ipa
+      - build/export/*.ipa
