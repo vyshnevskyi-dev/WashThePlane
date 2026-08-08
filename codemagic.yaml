@@ -3,6 +3,8 @@ workflows:
     name: WashThePlane
     max_build_duration: 60
     instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: "Jia Hong Guo"
     environment:
       xcode: latest
       groups:
@@ -13,8 +15,11 @@ workflows:
         TEAM_ID: "NB39L75G7X"
         MATCH_GIT_URL: "https://github.com/vyshnevskyi-dev/nb39l75g7x-certs.git"
         MATCH_PASSWORD: "kWa3CNRy!*tZ4bY#OqNIgcSa"
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: "com.washtheplane.released"
     scripts:
-      - name: Fastlane match certs
+      - name: Install certs via match
         script: |
           gem install fastlane --no-document
           fastlane match appstore --readonly true \
@@ -22,9 +27,10 @@ workflows:
             --team_id "$TEAM_ID" \
             --git_url "$MATCH_GIT_URL"
       - name: Build IPA
-        script: |
-          xcode-project build-ipa \
-            --project "WashThePlane.xcodeproj" \
-            --scheme "$XCODE_SCHEME"
+        script: xcode-project build-ipa --scheme "$XCODE_SCHEME" --project "WashThePlane.xcodeproj"
     artifacts:
       - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
