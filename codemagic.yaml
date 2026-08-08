@@ -10,12 +10,17 @@ workflows:
       vars:
         XCODE_SCHEME: "WashThePlane"
         BUNDLE_ID: "com.washtheplane.released"
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: "com.washtheplane.released"
     scripts:
+      - name: Fetch signing files
+        script: |
+          keychain initialize
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE
       - name: Build IPA
-        script: xcode-project build-ipa --scheme "$XCODE_SCHEME" --project "WashThePlane.xcodeproj"
+        script: |
+          xcode-project build-ipa \
+            --project "WashThePlane.xcodeproj" \
+            --scheme "$XCODE_SCHEME"
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
