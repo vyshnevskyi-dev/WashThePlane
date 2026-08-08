@@ -26,6 +26,6 @@ workflows:
           xcode-project build-ipa \
             --project "WashThePlane.xcodeproj" \
             --scheme "$XCODE_SCHEME" \
-            --archive-flags="-allowProvisioningUpdates DEVELOPMENT_TEAM=$TEAM_ID"
+            --archive-flags="DEVELOPMENT_TEAM=$TEAM_ID"
     artifacts:
       - build/ios/ipa/*.ipa
