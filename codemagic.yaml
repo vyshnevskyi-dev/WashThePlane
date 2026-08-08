@@ -11,8 +11,6 @@ workflows:
         TEAM_ID: "NB39L75G7X"
         MATCH_GIT_URL: "https://github.com/vyshnevskyi-dev/nb39l75g7x-certs.git"
         MATCH_PASSWORD: "kWa3CNRy!*tZ4bY#OqNIgcSa"
-        APP_STORE_CONNECT_KEY_IDENTIFIER: CGAC4L3D2T
-        APP_STORE_CONNECT_ISSUER_ID: a2595058-57ae-4d5f-8bc7-3e1276717d1d
       groups:
         - head
     scripts:
@@ -29,6 +27,6 @@ workflows:
           xcode-project build-ipa \
             --project "WashThePlane.xcodeproj" \
             --scheme "$XCODE_SCHEME" \
-            --archive-flags="-destination 'generic/platform=iOS'"
+            --archive-flags="CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=$TEAM_ID PROVISIONING_PROFILE_SPECIFIER=match PROVISIONING_PROFILE=$HOME/Library/MobileDevice/Provisioning\\ Profiles/*.mobileprovision CODE_SIGN_IDENTITY=Apple\\ Distribution"
     artifacts:
       - build/ios/ipa/*.ipa
