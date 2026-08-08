@@ -10,20 +10,29 @@ workflows:
       vars:
         XCODE_SCHEME: "WashThePlane"
         BUNDLE_ID: "com.washtheplane.released"
+        TEAM_ID: "NB39L75G7X"
     scripts:
-      - name: Fetch signing files
+      - name: Archive & Export IPA
         script: |
-          keychain initialize
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE
-      - name: Build IPA
-        script: |
-          xcode-project build-ipa \
-            --project "WashThePlane.xcodeproj" \
-            --scheme "$XCODE_SCHEME"
+          xcodebuild archive \
+            -project "WashThePlane.xcodeproj" \
+            -scheme "$XCODE_SCHEME" \
+            -archivePath "build/WashThePlane.xcarchive" \
+            -destination "generic/platform=iOS" \
+            -allowProvisioningUpdates \
+            -authenticationKeyIssuerID "a2595058-57ae-4d5f-8bc7-3e1276717d1d" \
+            -authenticationKeyID "CGAC4L3D2T" \
+            -authenticationKeyPath ~/private_keys/AuthKey_CGAC4L3D2T.p8
+          
+          xcodebuild -exportArchive \
+            -archivePath "build/WashThePlane.xcarchive" \
+            -exportPath "build/export" \
+            -exportOptionsPlist /dev/stdin <<< '
+            <?xml version="1.0" encoding="UTF-8"?>
+            <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+            <plist version="1.0"><dict>
+            <key>method</key><string>app-store</string>
+            <key>teamID</key><string>'"$TEAM_ID"'</string>
+            </dict></plist>'
     artifacts:
-      - build/ios/ipa/*.ipa
-    publishing:
-      app_store_connect:
-        auth: integration
-        submit_to_testflight: true
+      - build/export/*.ipa
